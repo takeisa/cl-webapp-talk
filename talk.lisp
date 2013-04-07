@@ -17,7 +17,7 @@
       (talk message))))
 
 (defun talk-page (message)
-  (setf (cl-who:html-mode) :xml)
+  (setf (cl-who:html-mode) :html5)
   (cl-who:with-html-output-to-string (*standard-output* nil :prologue t :indent t)
     (:html
      (:head (:title "Talk with Open JTalk")
