@@ -9,14 +9,14 @@
   (setf (hunchentoot:content-type*) "text/plain")
   (format nil "Hey~@[ ~A~]!" name))
 
-(hunchentoot:define-easy-handler (say :uri "/talk") (sentence)
+(hunchentoot:define-easy-handler (talk-handler :uri "/talk") (message)
   (setf (hunchentoot:content-type*) "text/html")
   (prog1
-    (talk-page sentence)
-    (when (> (length sentence) 0)
-      (talk sentence))))
+    (talk-page message)
+    (when (> (length message) 0)
+      (talk message))))
 
-(defun talk-page (sentence)
+(defun talk-page (message)
   (setf (cl-who:html-mode) :xml)
   (cl-who:with-html-output-to-string (*standard-output* nil :prologue t :indent t)
     (:html
@@ -27,29 +27,30 @@
       (:p
        (:form :method "get"
 	      "Talk:"
-	      (:input :type "text" :name "sentence"
-		      :value (cl-who:escape-string sentence)
+	      (:input :type "text" :name "message"
+		      :value (cl-who:escape-string message)
 		      :size "80")
 	      (:input :type "submit")
-	      (:input :type "button" :value "消去"
-		      :onclick "var elm = document.getElementsByName(\"sentence\")[0]; elm.value = \"\"; elm.focus();")))))))
+	      (:input :type "button" :value "Clear message"
+		      :onclick "var elm = document.getElementsByName(\"message\")[0]; elm.value = \"\"; elm.focus();")))))))
 
+;;; edit your own environment
 (defparameter *talk-command* "/home/satoshi/workspace/talk/talk.sh")
-(defparameter *talk-file-name* "/home/satoshi/workspace/talk/talk.txt")
+(defparameter *message-file-name* "/home/satoshi/workspace/talk/message.txt")
 
-(defun talk (s)
-  (write-sentence s)
+(defun talk (message)
+  (write-message message)
   (exec-talk-command))
 
 (defun exec-talk-command ()
     (trivial-shell:shell-command
      (with-output-to-string (*standard-output*)
-       (format t "~a ~a" *talk-command* *talk-file-name*))))
+       (format t "~a ~a" *talk-command* *message-file-name*))))
 
-(defun write-sentence (s)
+(defun write-message (message)
   (with-open-file (*standard-output*
-		   *talk-file-name*
+		   *message-file-name*
 		   :direction :output
 		   :if-exists :supersede)
-    (format t "~a~%" s)))
+    (format t "~a~%" message)))
 
