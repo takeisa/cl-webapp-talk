@@ -1,5 +1,5 @@
 #!/bin/sh
-TMP=/tmp/talk.wav
+TMP=/tmp/message.wav
 cd /usr/share/hts-voice/nitech-jp-atr503-m001
 #cd /usr/share/hts-voice/mei_happy
 cat "$1" | open_jtalk \
